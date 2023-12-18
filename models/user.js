@@ -26,10 +26,17 @@ const userSchema = new mongoose.Schema({
     isBussinessAcount:{
         type: Boolean,
         default: 0
-    }   
+    },
+    profile_pic:{
+        type: String,
+        default: "/uploads/default-avtar.webp",
+    }
 },{timestamps:true})
 
-
+userSchema.virtual('profilePicFullPath').get(function() {
+    const baseUrl = 'http://localhost:3000';
+    return `${baseUrl}${this.profile_pic}`;
+});
 
 const User = mongoose.model('user', userSchema)
 

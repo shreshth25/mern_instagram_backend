@@ -15,6 +15,7 @@ const isAuthenticated = async (req, resp, next) =>{
         const user = jwt.verify(token, process.env.SECRET_KEY)
 
         const existing_user = await User.findById(user.user_id).select('-password -createdAt -updatedAt')
+        
         if(!existing_user)
         {    
             return resp
