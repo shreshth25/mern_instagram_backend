@@ -38,7 +38,41 @@ const username = (req, resp) => {
   const { username } = req.body;
 };
 
-const login = (req, resp) => {};
+const login = async (req, resp) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return resp
+        .status(400)
+        .json({ status: false, message: "all fields are mandatory" });
+    }
+    const existing_user = await User.findOne({email: email})
+    if(!existing_user)
+    {
+      return resp
+        .status(400)
+        .json({ status: false, message: "User Does not exist" });
+    }
+    const isMatched = bcrypt.compare(password, existing_user.password);
+    if(!isMatched)
+    {
+      return resp
+      .status(400)
+      .json({ status: false, message: "Invalid Credentials" });
+    }
+    const token = jwt.sign({user_id:existing_user.id}, process.env.SECRET_KEY)
+    return resp
+    .status(200)
+    .json({ status: true, message: "User Login Successfully", token: token});
+
+  } catch (err) {
+    console.log("Error: (Login)", err)
+    return resp
+    .status(400)
+    .json({ status: false, message: "Something went wrong" });
+
+  }
+};
 
 const profile = (req, resp) => {};
 
