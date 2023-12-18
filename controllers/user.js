@@ -34,8 +34,21 @@ const register = async (req, resp) => {
   }
 };
 
-const username = (req, resp) => {
+const username_already_taken = (req, resp) => {
   const { username } = req.body;
+  const existing_user = User.findOne({username: username})
+  if(existing_user)
+  {
+    return resp
+    .status(400)
+    .json({'status': false, message:"Username already taken" })
+  }
+  else
+  {
+    return resp
+    .status(200)
+    .json({'status': false, message:"Username available" })
+  }
 };
 
 const login = async (req, resp) => {
@@ -74,6 +87,8 @@ const login = async (req, resp) => {
   }
 };
 
-const profile = (req, resp) => {};
+const profile = (req, resp) => {
+  return resp.json(req.user)
+};
 
-module.exports = { register, login, profile, username };
+module.exports = { register, login, profile, username_already_taken };
